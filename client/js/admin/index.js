@@ -34,6 +34,7 @@ class App extends BoundComponent {
       showingBlackout: props.showingBlackout,
       naiveLoginAllowed: props.naiveLoginAllowed,
       showingEndScreen: props.showingEndScreen,
+      showingRotate: props.showingRotate,
       addingQuestion: false,
       editingQuestions: [], // ids
       outputValue: '',
@@ -285,6 +286,43 @@ class App extends BoundComponent {
     }
   }
 
+  async rotateState(question, state, i) {
+    console.log('rotateState', question._id, state, i);
+    this.setQuestionState(question, state);
+  }
+
+  async rotateQuestions(rotate) {
+    this.state.showingRotate = rotate;
+    if (rotate) {
+
+      let states = [
+        'activate',
+        'show-live-results',
+        'close'
+      ];
+      let questions = this.state.questions;
+      var stateIndex = 0;
+      var questionIndex = 0;
+      var rotateState = this.rotateState.bind(this);
+      this._rotateInteval = setInterval(function() {
+        let state = states[stateIndex];
+        let question = questions[questionIndex];
+        rotateState(question, state, stateIndex);
+        stateIndex++;
+        if (stateIndex === states.length) {
+          stateIndex = 0;
+          questionIndex++;
+          if (questionIndex === questions.length) {
+            questionIndex = 0;
+          }
+        }
+      }, 2000);
+    } else {
+      clearInterval(this._rotateInteval);
+      this.setState({showingRotate: false});
+    }
+  }
+
   async setEndScreen(show) {
     const response = await fetch(`/admin/set-end-screen.json`, {
       method: 'POST',
@@ -308,10 +346,19 @@ class App extends BoundComponent {
     return this.setEndScreen(false);
   }
 
+
+  onRotateStartClick() {
+    return this.rotateQuestions(true);
+  }
+
+  onRotateEndClick() {
+    return this.rotateQuestions(false);
+  }
+
   render(props, {
     questions, addingQuestion, editingQuestions, showingLeaderboard,
     outputValue, view, showingVideo, showingBlackout, naiveLoginAllowed,
-    showingEndScreen
+    showingEndScreen, showingRotate
   }) {
     return <div>
 
@@ -343,6 +390,12 @@ class App extends BoundComponent {
             <QuestionUpdate onQuestionSaved={this.onQuestionSaved}/>
             :
             <div class="admin__questions-add">
+              {showingRotate ?
+                <button onClick={this.onRotateEndClick}>Stop autorotate</button>
+                :
+                <button onClick={this.onRotateStartClick}>Autorotate</button>
+              }
+
               {showingEndScreen ?
                 <button onClick={this.onHideEndScreenClick}>Hide End Screen</button>
                 :
@@ -505,6 +558,7 @@ fetch('/admin/initial-state.json', {
   const main = document.querySelector('.main-content');
   render(<App
     questions={data.questions}
+    showingRotate={data.showingRotate}
     showingLeaderboard={data.showingLeaderboard}
     showingVideo={data.showingVideo}
     showingBlackout={data.showingBlackout}
