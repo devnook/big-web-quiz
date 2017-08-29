@@ -183,6 +183,7 @@ class App extends BoundComponent {
 
         {showLiveResults && answerDisplayOrder && !correctAnswers ?
           <div class="live-results">
+            <h1>Developers vote</h1>
             {answerDisplayOrder.map((i, j) =>
               <AverageValue
                 color={colors[j % colors.length]}
