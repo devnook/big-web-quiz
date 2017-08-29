@@ -95,7 +95,7 @@ class App extends BoundComponent {
   componentDidUpdate(prevProps, prevState) {
     this.update(prevProps, prevState);
   }
-  render(props, {question, questionClosed, correctAnswers, answerDisplayOrder, averages, leaderboard, showLiveResults, showVideo, showBlackout}) {
+  render(props, {question, questionClosed, correctAnswers, answerDisplayOrder, averages, leaderboard, showLiveResults, showVideo, showBlackout, showStartScreen}) {
     if (leaderboard) {
       let type = 0;
       let position = 1;
@@ -141,6 +141,15 @@ class App extends BoundComponent {
     }
 
     if (!question) {
+      if (showStartScreen) {
+        return(
+          <div class="start-screen">
+            <h1>start screen</h1>
+
+          </div>
+        )
+      }
+
       return (
         <div>
           <img src="/static/images/title.png" class="opening-media opening-media--show"/>

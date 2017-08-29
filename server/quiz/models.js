@@ -154,6 +154,7 @@ export class Quiz {
         answers: this._activeQuestion.answers.map(answer => ({text: answer.text}))
       },
       showEndScreen: this.showingEndScreen,
+      showStartScreen: this.showingStartScreen,
       showLiveResults: this._showingLiveResults,
       questionClosed: !this._acceptingAnswers,
       // array of indexes for the correct answers

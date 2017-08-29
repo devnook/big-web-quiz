@@ -295,6 +295,16 @@ export function setEndScreen(req, res) {
   adminStateJson(req, res);
 }
 
+export function setStartScreen(req, res) {
+  quiz.showingStartScreen = !!req.body.show;
+  longPollers.broadcast(quiz.getState());
+  presentationListeners.broadcast({
+     question: null,
+    'showStartScreen': quiz.showingStartScreen,
+  });
+  adminStateJson(req, res);
+}
+
 export function presentationListen(req, res) {
   presentationListeners.add(req, res);
 }

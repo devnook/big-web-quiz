@@ -286,26 +286,46 @@ class App extends BoundComponent {
     }
   }
 
+  async showStartScreen(show) {
+    const response = await fetch(`/admin/set-start-screen.json`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({show})
+    });
+
+    const data = await response.json();
+
+    if (data.err) throw Error(data.err);
+
+    this.setState(data);
+  }
+
   async rotateState(question, state, i) {
     console.log('rotateState', question._id, state, i);
+    if (state === 'wait') {
+      return;
+    }
     this.setQuestionState(question, state);
   }
 
   async rotateQuestions(rotate) {
     this.state.showingRotate = rotate;
     if (rotate) {
-
+      this.showStartScreen(true);
       let states = [
-        'activate',
-        'show-live-results',
-        'close'
+        ['wait', 5000],
+        ['activate', 5000],
+        ['show-live-results', 5000],
+        ['close', 5000],
+        ['reveal', 5000]
       ];
       let questions = this.state.questions;
       var stateIndex = 0;
       var questionIndex = 0;
       var rotateState = this.rotateState.bind(this);
       this._rotateInteval = setInterval(function() {
-        let state = states[stateIndex];
+        let state = states[stateIndex][0];
         let question = questions[questionIndex];
         rotateState(question, state, stateIndex);
         stateIndex++;

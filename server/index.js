@@ -30,8 +30,8 @@ import {
   dbSetJson
 } from './views';
 import {
-  userMiddleware, generateAuthUrl, handleLogin, 
-  login, logoutRedirect, logoutJson, userJson, 
+  userMiddleware, generateAuthUrl, handleLogin,
+  login, logoutRedirect, logoutJson, userJson,
   updateUser, requiresLogin, requiresLoginJson, requiresAdminHtml,
   requiresAdminJson, questionAnswerJson, deleteUserAnswersJson,
   deleteUsersJson, getTopUsersJson, setLeaderboardBanJson,
@@ -43,14 +43,14 @@ import {
   deactivateQuestionJson, presentationListen,
   showLeaderboardJson, hideLeaderboardJson,
   liveResultsQuestionJson, showVideoJson,
-  showBlackoutJson, hideBlackoutJson, setEndScreen
+  showBlackoutJson, hideBlackoutJson, setEndScreen, setStartScreen
 } from './quiz/views';
 import {longPoll} from './long-pollers/views';
 import mongoose from './mongoose-db';
 import connectMongo from 'connect-mongo';
 const MongoStore = connectMongo(session);
 
-import {cookieSecret} from './settings'; 
+import {cookieSecret} from './settings';
 import {production} from './utils';
 
 const app = express();
@@ -156,6 +156,7 @@ adminRouter.post('/admin/show-video.json', showVideoJson);
 adminRouter.post('/admin/db.json', dbSetJson);
 adminRouter.post('/admin/set-leaderboard-ban.json', setLeaderboardBanJson);
 adminRouter.post('/admin/set-end-screen.json', setEndScreen);
+adminRouter.post('/admin/set-start-screen.json', setStartScreen);
 
 router.use(adminRouter);
 app.use(router);
