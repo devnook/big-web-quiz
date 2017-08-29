@@ -205,3 +205,17 @@ html, body {
     }
   }
 }
+
+.disclaimer {
+  position: absolute;
+  bottom: 30px;
+  text-align: center;
+  color: #00BFA3;
+  width: 100%;
+
+  span {
+    color: #fff;
+    display: block;
+    text-transform: uppercase;
+  }
+}
