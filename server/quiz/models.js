@@ -37,10 +37,20 @@ const questionSchema = mongoose.Schema({
   answers: [{
     text: {type: String, required: true},
     correct: Boolean
-  }]
+  }],
+  userAnswers: {}
 });
 
 export const Question = mongoose.model('Question', questionSchema);
+
+const userAnswerSchema = mongoose.Schema({
+  question: {type: String, index: true},
+  user: {type: String},
+  choices: [Number]
+});
+
+export const UserAnswer = mongoose.model('UserAnswer', userAnswerSchema);
+
 
 export class Quiz {
   constructor() {
@@ -81,21 +91,25 @@ export class Quiz {
     this._showingLiveResults = true;
     this.showingVideo = '';
   }
-  cacheAnswers(userId, answers) {
+  async cacheAnswers(userId, answers) {
     this._cachedUserAnswers[userId] = answers;
+    let query = {question: this._activeQuestion._id, user: userId};
+    let update = {
+      choices: answers
+    };
+    await UserAnswer.findOneAndUpdate(query, update, {upsert: true, new: true});
   }
-  getAverages() {
+  async getAverages() {
     let total = 0;
     const occurrences = Array(this._activeQuestion.answers.length).fill(0);
-
-    for (const userId of Object.keys(this._cachedUserAnswers)) {
-      total++;
-      const choices = this._cachedUserAnswers[userId];
-      for (const choice of choices) {
-        occurrences[choice]++;
+    await UserAnswer.find({question: this._activeQuestion._id}).then(answers => {
+      for (const answer of answers) {
+        total++;
+        for (const choice of answer.choices) {
+          occurrences[choice]++;
+        }
       }
-    }
-
+    });
     return occurrences.map(n => n/total);
   }
   closeForAnswers() {

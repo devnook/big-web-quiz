@@ -83,7 +83,7 @@ function upsertQuestion(data) {
     update.key = data.key;
     return Question.findOneAndUpdate({key: data.key}, update, {new: true, upsert: true});
   }
-  
+
   if (data.id) {
     return Question.findByIdAndUpdate(data.id, update, {new: true});
   }
@@ -225,7 +225,12 @@ export function liveResultsQuestionJson(req, res) {
 
     quiz.showLiveResults();
 
-    presentationListeners.broadcast(quiz.getState());
+    let state = quiz.getState();
+    quiz.getAverages().then(averages => {
+      state.averages = averages;
+      presentationListeners.broadcast(state);
+    });
+
     adminStateJson(req, res);
   }).catch(err => {
     res.status(500).json({err: err.message});

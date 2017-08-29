@@ -125,7 +125,7 @@ export function simpleUserObject(user) {
 export function userJson(req, res) {
   if (!req.user) {
     res.json({
-      user: null 
+      user: null
     });
     return;
   }
@@ -308,8 +308,10 @@ export async function questionAnswerJson(req, res) {
     const answerIndex = req.user.answers.findIndex(a => a.questionId.equals(question._id));
     quiz.cacheAnswers(req.user._id, choices);
 
+    const averages = await quiz.getAverages();
+
     presentationListeners.broadcastThrottled({
-      averages: quiz.getAverages()
+      averages: averages
     });
 
     if (answerIndex != -1) {

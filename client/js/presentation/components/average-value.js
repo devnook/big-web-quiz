@@ -21,6 +21,7 @@ export default class AverageValue extends BoundComponent {
 
   constructor(props) {
     super(props);
+
     this.state = {
       animating: false,
       value: props.targetValue || 0,

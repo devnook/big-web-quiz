@@ -316,7 +316,7 @@ class App extends BoundComponent {
             questionIndex = 0;
           }
         }
-      }, 2000);
+      }, 5000);
     } else {
       clearInterval(this._rotateInteval);
       this.setState({showingRotate: false});
